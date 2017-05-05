@@ -1,0 +1,83 @@
+#!/usr/bin/ruby
+
+# grandfather of.
+
+class Person
+  def initialize(first_name)
+    @first_name = first_name
+    @father = nil
+  end
+
+  def get_first_name
+    @first_name
+  end
+
+  def to_s
+    "#{@first_name}"
+  end
+
+  def getFather
+    @father
+  end
+
+  def setFather(person)
+    @father = person
+  end
+
+  def ==(another_person)
+    self.get_first_name == another_person.get_first_name
+  end
+end
+
+
+def grandfather_of(person)
+  person.getFather.getFather unless person.nil? || person.getFather.nil? || person.getFather.getFather.nil?
+end
+
+def print_grandfather(person)
+  if grandfather_of(person).nil?
+    puts "We don't know who #{person}'s grandfather is."
+  else
+    puts "#{grandfather_of(person)} is the grandfather of #{person}"
+  end
+end
+
+puts "Please define the relationships between people in the format:"
+puts "<son> <father>"
+puts 'type "done" when done adding relationships'
+puts ""
+puts "eg."
+puts "adam john"
+puts "john malcolm"
+puts "tom jimmy"
+puts "patrick jimmy"
+puts "done"
+puts ""
+
+people = Array.new
+
+loop do
+  input_from_console = gets.chomp
+  break if input_from_console.eql? "done"
+
+  sons_name = input_from_console.gsub(/\s+/m, ' ').strip.split(" ")[0]
+  fathers_name = input_from_console.gsub(/\s+/m, ' ').strip.split(" ")[1]
+
+  father = people.find() {|person| person.get_first_name==fathers_name}
+  if father.nil?
+    father = Person.new(fathers_name)
+  end
+
+  son = people.find() {|person| person.get_first_name==sons_name}
+  if son.nil?
+    son = Person.new(sons_name)
+  end
+
+  son.setFather(father)
+
+  people.push(father) unless people.include? father
+  people.push(son) unless people.include? son
+
+end
+
+people.each {|person| print_grandfather(person)}
